@@ -73,9 +73,19 @@ def gen_images(config, eeg_features_test, date_time):
 
     ip_adapter_generator = IPAdapterGenerator(device=device, dtype=dtype)
     texts, _ = load_data()  # 加载用于命名的文本标签
-    gen_dir = config.gen_dir
-    gen_dir = os.path.join(gen_dir, date_time)
+    
+    # 获取当前项目目录名
+    current_dir = os.path.basename(os.getcwd())
+    
+    # 解析 date_time (格式: MMDD_HHMMSS) 为 月日 和 时分秒
+    date_part = date_time.split('_')[0]  # MMDD
+    time_part = date_time.split('_')[1]  # HHMMSS
+    
+    # 构建目录结构：../Gen/项目名/MMDD/HHMMSS/
+    gen_base_dir = os.path.join("..", "Gen", current_dir, date_part, time_part)
+    gen_dir = gen_base_dir
     os.makedirs(gen_dir, exist_ok=True)
+    
     # 生成图像
     eeg_features_test = eeg_features_test.unsqueeze(1)
     for k in tqdm(range(len(eeg_features_test))):
@@ -207,6 +217,7 @@ if __name__ == "__main__":
         # step2: generate images
         gen_dir = gen_images(config, eeg_features_test, date_time)
     else:
+        # 在only_eval模式下，使用配置文件中指定的gen_dir目录
         gen_dir = config.gen_dir
 
     # step3: evaluate images

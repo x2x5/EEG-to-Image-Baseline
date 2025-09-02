@@ -1,6 +1,6 @@
 data_path: "/data1/share_data/EEG_Image_decode/Preprocessed_data_250Hz"
 img_directory_training: "/data1/share_data/EEG_Image_decode/training_images"
 img_directory_test: "/data1/share_data/EEG_Image_decode/test_images"
-features_path: "/data1/junchao/x2x5/eeg_visual/Cos-EEG-to-Image/data/made/norm"
+features_path: "clip_feature"
 device: "cuda:1"
 model_type: "ViT-H-14"
