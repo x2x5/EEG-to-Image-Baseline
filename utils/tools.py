@@ -54,12 +54,12 @@ def display_samples(
     # 加载中文标签
     labels = None
     if use_chinese:
-        labels = load_labels("configs/labels_chinese.txt")
+        labels = load_labels("config/labels_chinese.txt")
         font_path = "/usr/share/fonts/opentype/noto/NotoSansCJK-Regular.ttc"
         font_prop = fm.FontProperties(fname=font_path)
         print(f"使用中文字体: {font_path}")
     else:
-        labels = load_labels("configs/labels_english.txt")
+        labels = load_labels("config/labels_english.txt")
         font_prop = None
 
     # 创建图形
