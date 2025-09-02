@@ -8,7 +8,7 @@ import torch.nn as nn
 from torchvision import transforms
 from PIL import Image
 import open_clip
-
+from utils.tools import load_config
 
 class EEGDataset:
     """
@@ -17,17 +17,18 @@ class EEGDataset:
 
     def __init__(
         self,
-        config,
         exclude_subject=None,
         subjects=None,
         train=True,
-        time_window=[0, 1.0],
+        time_window=[0, 1.0]
     ):
+        config = load_config("config/dataset.yaml")
         self.data_path = config.data_path
+        self.train = train
+        
         self.img_directory_training = config.img_directory_training
         self.img_directory_test = config.img_directory_test
         self.features_path = config.features_path
-        self.train = train
         self.subject_list = os.listdir(self.data_path)
         self.subjects = self.subject_list if subjects is None else subjects
         self.n_sub = len(self.subjects)
@@ -47,7 +48,9 @@ class EEGDataset:
         features_filename = (
             os.path.join(self.features_path, f"{config.model_type}_features_train.pt")
             if self.train
-            else os.path.join(self.features_path, f"{config.model_type}_features_test.pt")
+            else os.path.join(
+                self.features_path, f"{config.model_type}_features_test.pt"
+            )
         )
 
         if os.path.exists(features_filename):
@@ -61,7 +64,7 @@ class EEGDataset:
                     config.model_type,
                     pretrained="laion2b_s32b_b79k",
                     precision="fp32",
-                    device=config.device,
+                    device=self.device,
                 )
             )
             self.text_features = self.Textencoder(self.text)

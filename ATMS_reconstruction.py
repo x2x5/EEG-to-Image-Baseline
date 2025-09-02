@@ -38,6 +38,8 @@ from torch import nn
 from torch.optim import AdamW
 import logging
 
+from utils.tools import Config, load_config
+
 
 class TransformerConfig:
     def __init__(self):
@@ -709,20 +711,6 @@ def main_train_loop(
 import datetime
 
 
-class Config:
-    def __init__(self, config_dict):
-        # 从字典中设置属性
-        for key, value in config_dict.items():
-            setattr(self, key, value)
-
-
-def load_config(config_path="config.yaml"):
-    """从 YAML 文件加载配置"""
-    with open(config_path, "r", encoding="utf-8") as file:
-        config_dict = yaml.safe_load(file)
-    return Config(config_dict)
-
-
 def main():
     # 从 YAML 配置文件加载配置
     try:
@@ -760,14 +748,14 @@ def main():
         optimizer = AdamW(itertools.chain(eeg_model.parameters()), lr=config.lr)
 
         if config.insubject:
-            train_dataset = EEGDataset(config, subjects=[sub], train=True)
-            test_dataset = EEGDataset(config, subjects=[sub], train=False)
+            train_dataset = EEGDataset(subjects=[sub], train=True)
+            test_dataset = EEGDataset(subjects=[sub], train=False)
         else:
             train_dataset = EEGDataset(
-                config, exclude_subject=sub, subjects=subjects, train=True
+                exclude_subject=sub, subjects=subjects, train=True
             )
             test_dataset = EEGDataset(
-                config, exclude_subject=sub, subjects=subjects, train=False
+                exclude_subject=sub, subjects=subjects, train=False
             )
 
         train_loader = DataLoader(

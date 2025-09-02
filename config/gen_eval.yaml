@@ -1,0 +1,12 @@
+device: "cuda:1"
+eval_dir: "eval_output"
+eeg_encoder_path: "train_output/ATMS/sub-08/0902/192334/best_model.pth"
+sub: "sub-08"
+batch_size: 200
+gen_dir: "/data1/junchao/x2x5/eeg_visual/Gen/Sustech_Baseline/"
+imsize: 256
+gt_source_dir: "/data1/share_data/EEG_Image_decode/test_images"
+comparison_num_samples: 10
+use_english: false
+only_eval: false
+gen_num: 1
