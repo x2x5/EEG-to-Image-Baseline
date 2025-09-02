@@ -7,8 +7,9 @@ lr: 0.0003
 epochs: 40
 batch_size: 64
 
+
 # 设备配置
-device: "cuda:1"
+device: "cuda:0"
 
 # 实验配置
 insubject: true
