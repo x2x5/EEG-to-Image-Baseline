@@ -4,10 +4,10 @@ eeg_encoder_path: "train_output/ATMS/sub-08/0902/192334/best_model.pth"
 sub: "sub-08"
 batch_size: 200
 # 注意: gen_dir 配置项已不再使用，目录结构现在自动生成为: ../Gen/项目名/MMDD/HHMMSS/
-gen_dir: "../Gen/EEG-to-Image-Baseline/" # 保留用于向后兼容
+gen_dir: "/data1/junchao/x2x5/eeg_visual/Gen/Sustech_Baseline/0902_201109" # 保留用于向后兼容
 imsize: 256
 gt_source_dir: "/data1/share_data/EEG_Image_decode/test_images"
 comparison_num_samples: 10
 use_english: false
-only_eval: false
+only_eval: true
 gen_num: 1

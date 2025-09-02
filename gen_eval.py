@@ -143,7 +143,7 @@ def eval_images(config, gen_dir, date_time):
     num_samples = config.comparison_num_samples
     display_samples(
         gt_images.cpu(),
-        recon_images[0].cpu(),
+        recon_images.cpu(),
         gt_labels,
         num_samples,
         config.imsize,

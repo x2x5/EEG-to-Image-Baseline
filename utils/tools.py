@@ -22,13 +22,12 @@ class Config:
             setattr(self, key, value)
 
 
-
-
 def load_config(config_path="config.yaml"):
     """从 YAML 文件加载配置"""
     with open(config_path, "r", encoding="utf-8") as file:
         config_dict = yaml.safe_load(file)
     return Config(config_dict)
+
 
 def load_labels(labels_file="data/labels_chinese.txt"):
     """加载中文标签文件"""
@@ -109,7 +108,10 @@ def display_samples(
         axes[0, i].axis("off")
 
         # 重构图
-        recon_img = recon_images[idx].permute(1, 2, 0).cpu().numpy()
+        if len(recon_images.shape) == 4:
+            recon_img = recon_images[idx].permute(1, 2, 0).cpu().numpy()
+        else:
+            recon_img = recon_images[0][idx].permute(1, 2, 0).cpu().numpy()
         axes[1, i].imshow(recon_img)
         axes[1, i].axis("off")
 
