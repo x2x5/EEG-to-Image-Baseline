@@ -128,11 +128,28 @@ def eval_images(config, gen_dir, date_time):
         source_dir=gen_dir,
         imsize=config.imsize,
     )
+    
+    # 修复维度处理逻辑，确保兼容gen_num=1和>1的情况
     if len(recon_images) != len(gt_images):
-        # group into K groups
+        # 当recon_images数量不等于gt_images时（通常是gen_num>1的情况）
+        # 重新组织为(gen_num, batch_size, C, H, W)的形状
         recon_images = recon_images.view(
             len(gt_images), config.gen_num, *gt_images.shape[1:]
         ).permute(1, 0, 2, 3, 4)
+    else:
+        # 当数量相等时（通常是gen_num=1的情况）
+        # 需要确保第一个维度是gen_num
+        if config.gen_num == 1:
+            # 添加gen_num维度：(batch_size, C, H, W) -> (1, batch_size, C, H, W)
+            recon_images = recon_images.unsqueeze(0)
+        else:
+            # 如果gen_num>1但数量相等，说明可能配置有问题，给出警告
+            print(f"Warning: gen_num={config.gen_num} but recon_images count equals gt_images count. Using first gen_num images.")
+            # 重新组织为(gen_num, batch_per_gen, C, H, W)
+            batch_per_gen = len(gt_images) // config.gen_num
+            recon_images = recon_images[:config.gen_num * batch_per_gen].view(
+                config.gen_num, batch_per_gen, *gt_images.shape[1:]
+            )
 
     recon_images = recon_images.to(device)
 
@@ -184,26 +201,31 @@ def eval_images(config, gen_dir, date_time):
     results_df.index = run_labels
 
     # 检查是否有足够的数据来计算平均值
-    if len(results_df) > 0:
+    if len(results_df) > 0 and len(results_df.columns) > 0:
         # 计算每一列（每个指标）的平均值
         average_metrics = results_df.mean()
         # 使用 .loc 添加一个名为 'Average' 的新行
         results_df.loc["Average"] = average_metrics
+    else:
+        print("Warning: No metrics were calculated successfully, skipping average calculation.")
 
     # Step 4: Report and save results
     print("\n--- 评估结果 ---")
-    # 使用 to_string() 打印完整的、格式优美的表格
-    print(results_df.to_string(float_format="%.3f"))
+    if len(results_df.columns) > 0:
+        # 使用 to_string() 打印完整的、格式优美的表格
+        print(results_df.to_string(float_format="%.3f"))
 
-    # 保存结果到文件时，我们现在希望把行名（'Run 0', 'Run 1', 'Average'）也保存进去
-    # 所以将 index=False 改为 index=True
-    results_df.to_csv(
-        config.results_csv_path,
-        sep="\t",
-        index=True,  # <-- 注意这里的变化
-        float_format="%.3f",
-    )
-    print(f"\n结果已包含平均值，并保存到: {config.results_csv_path}")
+        # 保存结果到文件时，我们现在希望把行名（'Run 0', 'Run 1', 'Average'）也保存进去
+        # 所以将 index=False 改为 index=True
+        results_df.to_csv(
+            config.results_csv_path,
+            sep="\t",
+            index=True,  # <-- 注意这里的变化
+            float_format="%.3f",
+        )
+        print(f"\n结果已包含平均值，并保存到: {config.results_csv_path}")
+    else:
+        print("No metrics calculated successfully. Results not saved.")
 
 
 if __name__ == "__main__":
