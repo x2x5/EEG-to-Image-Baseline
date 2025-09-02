@@ -1,0 +1,37 @@
+# EEG Transformer 训练配置文件
+# 数据路径配置
+data_path: "/data1/share_data/EEG_Image_decode/Preprocessed_data_250Hz"
+output_dir: "./train_output"
+img_directory_training: "/data1/share_data/EEG_Image_decode/training_images"
+img_directory_test: "/data1/share_data/EEG_Image_decode/test_images"
+features_path: "/data1/junchao/x2x5/eeg_visual/Cos-EEG-to-Image/data/made/norm"
+model_type: "ViT-H-14"
+# WandB 配置
+project: "train_pos_img_text_rep"
+entity: "sustech_rethinkingbci"
+name: "lr=3e-4_img_pos_pro_eeg"
+
+# 训练参数
+lr: 0.0003
+epochs: 40
+batch_size: 64
+
+# 设备配置
+device: "cuda:1"
+
+# 实验配置
+insubject: true
+encoder_type: "ATMS"
+
+# 受试者列表
+subjects:
+  # - "sub-01"
+  # - "sub-02"
+  # - "sub-03"
+  # - "sub-04"
+  # - "sub-05"
+  # - "sub-06"
+  # - "sub-07"
+  - "sub-08"
+  # - "sub-09"
+  # - "sub-10"
